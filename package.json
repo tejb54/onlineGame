@@ -1,0 +1,15 @@
+{
+  "name": "onlineGame",
+  "version": "1.0.0",
+  "description": "Simple online game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Tobias Gillström",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^2.0.1"
+  }
+}
