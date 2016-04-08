@@ -12,6 +12,9 @@ var gameState = {
     this.player.scale.setTo(2,2);
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
     this.player.body.collideWorldBounds=true;
+
+    //tell the server that you are ready to get data
+    socket.emit('ready');
   },
 
   update: function(){
