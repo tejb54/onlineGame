@@ -82,8 +82,17 @@ socket.on('moved',function(data){
       break;
     }
   }
-  // gameState.players[0].x = data.x;
-  // gameState.players[0].y = data.y;
-  // gameState.players[0].angle = data.angle;
-  //game.debug.text( "this is another player", data.x, data.y );
+});
+
+socket.on('remove player',function(id){
+  for (var i = 0; i < gameState.players.length; i++) {
+
+    //remove player from array with the right id
+    if(id == gameState.players[i].id)
+    {
+      gameState.players[i].destroy();
+      gameState.players.splice(i,1);
+      break;
+    }
+  }
 });

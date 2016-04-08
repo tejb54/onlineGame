@@ -3,6 +3,8 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var port = 9058;
+
 //networking code for the game using socket.io
 require('./networking.js')(io);
 
@@ -12,6 +14,6 @@ app.get('/', function(req, res){
   res.sendFile('index.html');
 });
 
-http.listen(9058, function(){
-  console.log('listening on *:9058');
+http.listen(port, function(){
+  console.log('listening on *:' + port);
 });

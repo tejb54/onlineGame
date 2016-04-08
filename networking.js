@@ -22,6 +22,23 @@ module.exports = function(io){
     //player disconnect remove from players
     socket.on('disconnect',function(){
       console.log("disconnect!");
+
+      //remove the player from the array
+      for (var i = 0; i < players.length; i++)
+      {
+
+        //remove the player with the same id
+        if(socket.id == players[i])
+        {
+          //remove at position i in the array
+          players.splice(i, 1);
+
+          //send the info to all the other players that a player has disconnected
+          socket.broadcast.emit('remove player',socket.id);
+          break;
+        }
+
+      }
     });
 
     socket.on('ready',function(){
