@@ -4,6 +4,7 @@ var gameState = {
 
   preload: function(){
     game.load.image('player',"/assets/images/snake.png");
+    game.load.image('bullet',"/assets/images/bullet.png");
   },
 
   create: function(){
@@ -40,11 +41,27 @@ var gameState = {
       game.physics.arcade.velocityFromAngle(this.player.angle, 300, this.player.body.velocity);
     }
 
+    if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN))
+    {
+      this.addBullet();
+    }
+
     if(moved)
     {
       //send players position
       socket.emit('moved',{x:this.player.body.x,y:this.player.body.y, angle:this.player.body.angle});
     }
+  },
+
+  addBullet: function()
+  {
+    var bullet = game.add.sprite(this.player.x,this.player.y,'bullet');
+    game.physics.enable(bullet, Phaser.Physics.ARCADE);
+    game.physics.arcade.velocityFromAngle(this.player.angle, 500, bullet.body.velocity);
+    bullet.angle = this.player.angle;
+
+    bullet.outOfBoundsKill = true;
+
   }
 };
 
