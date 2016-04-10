@@ -2,7 +2,25 @@ module.exports = function(io){
   //var uuid = require('uuid');
 
   //array with the id:s to all of the players
-  var players = []
+  var players = [];
+
+
+  function removePlayer(socket){
+    //remove the player from the array
+    for (var i = 0; i < players.length; i++)
+    {
+      //remove the player with the same id
+      if(socket.id == players[i])
+      {
+        //remove at position i in the array
+        players.splice(i, 1);
+
+        //send the info to all the other players that a player has disconnected
+        socket.broadcast.emit('remove player',socket.id);
+        break;
+      }
+    }
+  };
 
   io.on('connection', function(socket){
 
@@ -22,23 +40,7 @@ module.exports = function(io){
     //player disconnect remove from players
     socket.on('disconnect',function(){
       console.log("disconnect!");
-
-      //remove the player from the array
-      for (var i = 0; i < players.length; i++)
-      {
-
-        //remove the player with the same id
-        if(socket.id == players[i])
-        {
-          //remove at position i in the array
-          players.splice(i, 1);
-
-          //send the info to all the other players that a player has disconnected
-          socket.broadcast.emit('remove player',socket.id);
-          break;
-        }
-
-      }
+      removePlayer(socket);
     });
 
     socket.on('ready',function(){
@@ -51,13 +53,17 @@ module.exports = function(io){
           //send the already connected players to the new player
           socket.emit('spawn', players[i]);
         }
-
       }
+    });
+
+    socket.on('shoot',function(data){
+      console.log(data);
+      socket.broadcast.emit('shoot',data);
     });
 
     //player moved
     socket.on('moved',function(data){
-      console.log(data);
+      //console.log(data);
       data.id = socket.id;
       socket.broadcast.emit('moved',data);
     });

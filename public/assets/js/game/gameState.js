@@ -1,5 +1,4 @@
 var gameState = {
-  id: '0',
   players: [],
 
   preload: function(){
@@ -12,6 +11,11 @@ var gameState = {
     this.player.anchor.setTo(0.5,0.5);
     this.player.scale.setTo(2,2);
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
+
+
+    this.bullets = game.add.group();
+    this.onlineBullets = game.add.group();
+
     this.player.body.collideWorldBounds=true;
 
     //tell the server that you are ready to get data
@@ -43,14 +47,58 @@ var gameState = {
 
     if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN))
     {
-      this.addBullet();
+      if(this.bullets.children.length <= 4)
+      {
+        this.addBullet();
+      }
+
     }
 
     if(moved)
     {
       //send players position
-      socket.emit('moved',{x:this.player.body.x,y:this.player.body.y, angle:this.player.body.angle});
+      socket.emit('moved',{
+        x: this.player.x,
+        y: this.player.y,
+        angle: this.player.angle});
     }
+
+    //collision between onlineBullets and player
+    game.physics.arcade.overlap(this.player,this.onlineBullets,function(item1,item2){
+      console.log('player with id: ' + gameState.id + ' is dead');
+      item2.body = null;
+      item2.destroy();
+    },null,this);
+
+
+    //This is not tested
+    game.physics.arcade.overlap(this.players,this.bullets,function(item1,item2){
+      item2.body = null;
+      item2.destroy();
+    },null,this);
+
+
+
+    //this is temprary should be fixed with outOfBoundsKill = true
+    //this willl remove any of the bullets that are outside of the world
+    this.bullets.forEach(function(item){
+      if(item.body.x < 0 || item.body.x > 600 || item.body.y < 0 || item.body.y > 450)
+      {
+        //console.log('destroy');
+        item.body = null;
+        item.destroy();
+      }
+    });
+
+
+    this.onlineBullets.forEach(function(item){
+      if(item.body.x < 0 || item.body.x > 600 || item.body.y < 0 || item.body.y > 450)
+      {
+        console.log('destroy');
+        item.body = null;
+        item.destroy();
+      }
+    });
   },
 
   addBullet: function()
@@ -59,9 +107,14 @@ var gameState = {
     game.physics.enable(bullet, Phaser.Physics.ARCADE);
     game.physics.arcade.velocityFromAngle(this.player.angle, 500, bullet.body.velocity);
     bullet.angle = this.player.angle;
-
-    bullet.outOfBoundsKill = true;
-
+    this.bullets.add(bullet);
+    socket.emit('shoot',
+    {
+      x: bullet.body.x,
+      y: bullet.body.y,
+      angle: bullet.angle
+    }
+    );
   }
 };
 
@@ -78,6 +131,7 @@ socket.on('spawn' , function(data){
   console.log('other player joined with id: ' + data);
 
   var tmpSprite = game.add.sprite(20,20,'player');
+  tmpSprite.anchor.setTo(0.5,0.5);
   tmpSprite.scale.setTo(2.0,2.0);
   //game.physics.enable(tmpSprite, Phaser.Physics.ARCADE);
   tmpSprite.id = data;
@@ -86,8 +140,7 @@ socket.on('spawn' , function(data){
 });
 
 socket.on('moved',function(data){
-  console.log(data);
-  //TODO neeed to send the id of the player that moved and then update that players position
+  //console.log(data);
 
   for(var i = 0; i < gameState.players.length; i++)
   {
@@ -96,9 +149,20 @@ socket.on('moved',function(data){
     {
       gameState.players[i].x = data.x;
       gameState.players[i].y = data.y;
+      gameState.players[i].angle = data.angle;
       break;
     }
   }
+});
+
+
+//spawn bullets from other players
+socket.on('shoot',function(data){
+  var bullet = game.add.sprite(data.x,data.y,'bullet');
+  game.physics.enable(bullet, Phaser.Physics.ARCADE);
+  game.physics.arcade.velocityFromAngle(data.angle, 500, bullet.body.velocity);
+  bullet.angle = data.angle;
+  gameState.onlineBullets.add(bullet);
 });
 
 socket.on('remove player',function(id){

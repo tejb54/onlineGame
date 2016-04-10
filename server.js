@@ -3,7 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var port = 9058;
+var port = 8000;
 
 //networking code for the game using socket.io
 require('./networking.js')(io);
