@@ -1,5 +1,4 @@
 var gameState = {
-  players: [],
 
   preload: function(){
     game.load.image('player',"/assets/images/snake.png");
@@ -12,9 +11,18 @@ var gameState = {
     this.player.scale.setTo(2,2);
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-
+    //group with your bullets
     this.bullets = game.add.group();
+
+    //group with bullets from other players
     this.onlineBullets = game.add.group();
+
+    //group of other players
+    this.players = game.add.group();
+    //needed for collision
+    this.players.enableBody = true;
+    this.players.physicsBodyType = Phaser.Physics.ARCADE;
+
 
     this.player.body.collideWorldBounds=true;
 
@@ -80,8 +88,8 @@ var gameState = {
 
 
 
-    //this is temprary should be fixed with outOfBoundsKill = true
-    //this willl remove any of the bullets that are outside of the world
+    //this is temporary should be fixed with outOfBoundsKill = true
+    //this will remove any of the bullets that are outside of the world
     this.bullets.forEach(function(item){
       if(item.body.x < 0 || item.body.x > game.world.width || item.body.y < 0 || item.body.y > game.world.height)
       {
@@ -120,8 +128,6 @@ var gameState = {
 };
 
 //networking
-//TODO make a isReady event to secure that the client is ready to add other players
-
 
 socket.on('connected' ,function(id){
   gameState.id = id;
@@ -137,20 +143,23 @@ socket.on('spawn' , function(data){
   //game.physics.enable(tmpSprite, Phaser.Physics.ARCADE);
   tmpSprite.id = data;
 
-  gameState.players.push(tmpSprite);
+  gameState.players.add(tmpSprite);
 });
 
 socket.on('moved',function(data){
   //console.log(data);
 
-  for(var i = 0; i < gameState.players.length; i++)
+  for(var i = 0; i < gameState.players.children.length; i++)
   {
+    //cache the item in the array
+    var item = gameState.players.children[i];
+
     //find player with the right id
-    if(gameState.players[i].id == data.id)
+    if(item.id == data.id)
     {
-      gameState.players[i].x = data.x;
-      gameState.players[i].y = data.y;
-      gameState.players[i].angle = data.angle;
+      item.x = data.x;
+      item.y = data.y;
+      item.angle = data.angle;
       break;
     }
   }
@@ -167,13 +176,14 @@ socket.on('shoot',function(data){
 });
 
 socket.on('remove player',function(id){
-  for (var i = 0; i < gameState.players.length; i++) {
+  for (var i = 0; i < gameState.players.children.length; i++) {
+
+    var item = gameState.players.children[i];
 
     //remove player from array with the right id
-    if(id == gameState.players[i].id)
+    if(id == item.id)
     {
-      gameState.players[i].destroy();
-      gameState.players.splice(i,1);
+      item.destroy();
       break;
     }
   }

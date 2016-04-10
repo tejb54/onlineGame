@@ -20,7 +20,7 @@ module.exports = function(io){
         break;
       }
     }
-  };
+  }
 
   io.on('connection', function(socket){
 
@@ -28,13 +28,13 @@ module.exports = function(io){
     var id = socket.id;
     console.log(id);
 
-    //send data/info back to the newley connected player
+    //send data/info back to the newly connected player
     socket.emit('connected',id);
 
     //send spawn to all of the already connected players
     socket.broadcast.emit('spawn',id);
 
-    //Add the player id to array for the server to controll
+    //Add the player id to array for the server to control
     players.push(id);
 
     //player disconnect remove from players
@@ -47,7 +47,7 @@ module.exports = function(io){
       for (var i = 0; i < players.length; i++)
       {
 
-        //dont send a spawn evet about yourself
+        //don't send a spawn event about yourself
         if(socket.id != players[i])
         {
           //send the already connected players to the new player
@@ -68,4 +68,4 @@ module.exports = function(io){
       socket.broadcast.emit('moved',data);
     });
   });
-}
+};
