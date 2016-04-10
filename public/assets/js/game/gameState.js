@@ -71,7 +71,7 @@ var gameState = {
     },null,this);
 
 
-    //This is not tested
+    //This is not working
     //This will remove your bullets when they hit an enemy
     game.physics.arcade.overlap(this.players,this.bullets,function(item1,item2){
       item2.body = null;
