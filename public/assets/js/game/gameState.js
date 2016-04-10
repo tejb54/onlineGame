@@ -72,6 +72,7 @@ var gameState = {
 
 
     //This is not tested
+    //This will remove your bullets when they hit an enemy
     game.physics.arcade.overlap(this.players,this.bullets,function(item1,item2){
       item2.body = null;
       item2.destroy();
@@ -82,7 +83,7 @@ var gameState = {
     //this is temprary should be fixed with outOfBoundsKill = true
     //this willl remove any of the bullets that are outside of the world
     this.bullets.forEach(function(item){
-      if(item.body.x < 0 || item.body.x > 600 || item.body.y < 0 || item.body.y > 450)
+      if(item.body.x < 0 || item.body.x > game.world.width || item.body.y < 0 || item.body.y > game.world.height)
       {
         //console.log('destroy');
         item.body = null;
@@ -92,7 +93,7 @@ var gameState = {
 
 
     this.onlineBullets.forEach(function(item){
-      if(item.body.x < 0 || item.body.x > 600 || item.body.y < 0 || item.body.y > 450)
+      if(item.body.x < 0 || item.body.x > game.world.width || item.body.y < 0 || item.body.y > game.world.height)
       {
         console.log('destroy');
         item.body = null;

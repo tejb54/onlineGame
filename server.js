@@ -6,7 +6,7 @@ var io = require('socket.io')(http);
 var port = 8000;
 
 //networking code for the game using socket.io
-require('./networking.js')(io);
+require('./networking.js')(io.of('/game'));
 
 app.use(express.static(__dirname + '/public'));
 
