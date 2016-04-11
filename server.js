@@ -3,9 +3,23 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var port = 8000;
+var port = 9058;
+
+
+//application parameters to set the port
+process.argv.forEach(function (val,index) {
+  if (index === 2) {
+    var result = val.split('=');
+    if(result.length === 2 && result[0] === 'port')
+    {
+      port = parseInt(result[1]);
+    }
+  }
+});
+
 
 //networking code for the game using socket.io
+//using the namespace of /game
 require('./networking.js')(io.of('/game'));
 
 app.use(express.static(__dirname + '/public'));
