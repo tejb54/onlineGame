@@ -39,7 +39,7 @@ module.exports = function(io){
 
     //player disconnect remove from players
     socket.on('disconnect',function(){
-      console.log("disconnect!");
+      console.log("disconnect from " + socket.id);
       removePlayer(socket);
     });
 
@@ -57,7 +57,7 @@ module.exports = function(io){
     });
 
     socket.on('shoot',function(data){
-      console.log(data);
+      //console.log(data);
       socket.broadcast.emit('shoot',data);
     });
 

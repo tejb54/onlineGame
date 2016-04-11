@@ -1,15 +1,17 @@
 var gameState = {
 
   preload: function(){
-    game.load.image('player',"/assets/images/snake.png");
-    game.load.image('bullet',"/assets/images/bullet.png");
+    game.load.image('player',"/assets/images/spaceship.png");
+    game.load.image('bullet',"/assets/images/rocket.png");
     game.load.image('health',"/assets/images/health.png")
   },
 
   create: function(){
     this.player = game.add.sprite(10,10,'player');
     this.player.anchor.setTo(0.5,0.5);
-    this.player.scale.setTo(2,2);
+    this.player.scale.setTo(0.6,0.6);
+
+    this.player.shootEnabled = true;
 
     //adding a healtbar for the player
     this.healthBar = game.add.sprite(-10 + this.player.x ,-20 + this.player.y,'health');
@@ -40,7 +42,7 @@ var gameState = {
 
   update: function(){
 
-    this.healthBar.x = this.player.x - 15;
+    this.healthBar.x = this.player.x - 20;
     this.healthBar.y = this.player.y - 30;
 
     this.player.body.velocity.x = 0;
@@ -65,11 +67,23 @@ var gameState = {
       game.physics.arcade.velocityFromAngle(this.player.angle, 300, this.player.body.velocity);
     }
 
-    if(game.input.keyboard.isDown(Phaser.Keyboard.DOWN))
+    if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
     {
-      if(this.bullets.children.length <= 4)
+      if(this.player.shootEnabled)
       {
-        this.addBullet();
+        this.player.shootEnabled = false;
+
+        //makes the player shot three rockets/bullets
+        this.addBullet(this.player.angle);
+        this.addBullet(this.player.angle - 10);
+        this.addBullet(this.player.angle + 10);
+
+        //this.addBullet(this.player.angle - 20);
+        //this.addBullet(this.player.angle + 20);
+
+        setTimeout(function(){
+          gameState.player.shootEnabled = true;
+        },600);
       }
 
     }
@@ -133,13 +147,14 @@ var gameState = {
     });
   },
 
-  addBullet: function()
+  addBullet: function(angle)
   {
 
     var bullet = game.add.sprite(this.player.x,this.player.y,'bullet');
+    bullet.scale.setTo(0.15,0.15);
     game.physics.enable(bullet, Phaser.Physics.ARCADE);
-    game.physics.arcade.velocityFromAngle(this.player.angle, 500, bullet.body.velocity);
-    bullet.angle = this.player.angle;
+    game.physics.arcade.velocityFromAngle(angle, 500, bullet.body.velocity);
+    bullet.angle = angle;
     this.bullets.add(bullet);
     socket.emit('shoot',
     {
@@ -163,7 +178,7 @@ socket.on('spawn' , function(data){
 
   var tmpSprite = game.add.sprite(20,20,'player');
   tmpSprite.anchor.setTo(0.5,0.5);
-  tmpSprite.scale.setTo(2.0,2.0);
+  tmpSprite.scale.setTo(0.6,0.6);
   //game.physics.enable(tmpSprite, Phaser.Physics.ARCADE);
   tmpSprite.id = data;
 
@@ -189,10 +204,10 @@ socket.on('moved',function(data){
   }
 });
 
-
 //spawn bullets from other players
 socket.on('shoot',function(data){
   var bullet = game.add.sprite(data.x,data.y,'bullet');
+  bullet.scale.setTo(0.2,0.2);
   game.physics.enable(bullet, Phaser.Physics.ARCADE);
   game.physics.arcade.velocityFromAngle(data.angle, 500, bullet.body.velocity);
   bullet.angle = data.angle;
