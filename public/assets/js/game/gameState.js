@@ -3,12 +3,20 @@ var gameState = {
   preload: function(){
     game.load.image('player',"/assets/images/snake.png");
     game.load.image('bullet',"/assets/images/bullet.png");
+    game.load.image('health',"/assets/images/health.png")
   },
 
   create: function(){
     this.player = game.add.sprite(10,10,'player');
     this.player.anchor.setTo(0.5,0.5);
     this.player.scale.setTo(2,2);
+
+    //adding a healtbar for the player
+    this.healthBar = game.add.sprite(-10 + this.player.x ,-20 + this.player.y,'health');
+    //this.healthBar.anchor.setTo(0.5,0.5);
+    this.healthBar.scale.x = 15;
+
+
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
     //group with your bullets
@@ -31,6 +39,10 @@ var gameState = {
   },
 
   update: function(){
+
+    this.healthBar.x = this.player.x - 15;
+    this.healthBar.y = this.player.y - 30;
+
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
     this.player.body.angularVelocity = 0;
@@ -76,6 +88,17 @@ var gameState = {
       console.log('player with id: ' + gameState.id + ' is dead');
       item2.body = null;
       item2.destroy();
+      if(this.healthBar.scale.x > 0)
+      {
+        this.healthBar.scale.x--;
+      }
+      else
+      {
+        //tell the server that you have been killed
+        socket.emit('killed');
+        game.state.start('gameOverState');
+      }
+
     },null,this);
 
 
@@ -112,6 +135,7 @@ var gameState = {
 
   addBullet: function()
   {
+
     var bullet = game.add.sprite(this.player.x,this.player.y,'bullet');
     game.physics.enable(bullet, Phaser.Physics.ARCADE);
     game.physics.arcade.velocityFromAngle(this.player.angle, 500, bullet.body.velocity);

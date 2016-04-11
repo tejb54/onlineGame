@@ -67,5 +67,11 @@ module.exports = function(io){
       data.id = socket.id;
       socket.broadcast.emit('moved',data);
     });
+
+    socket.on('killed',function (){
+      //player killed by other player
+      console.log(socket.id + ' killed');
+      removePlayer(socket);
+    });
   });
 };
