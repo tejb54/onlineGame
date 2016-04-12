@@ -2,22 +2,46 @@ var gameState = {
 
   preload: function(){
     game.load.image('player',"/assets/images/spaceship.png");
-    game.load.image('bullet',"/assets/images/rocket.png");
-    game.load.image('health',"/assets/images/health.png")
+    game.load.image('bullet',"/assets/images/laser.png");
+    game.load.image('health',"/assets/images/health.png");
+    game.load.image('star',"/assets/images/star.png");
   },
 
   create: function(){
+    game.world.setBounds(0, 0, 1920, 1920);
+
+    //make the start background
+    var emitter = game.add.emitter(game.world.centerX, game.world.centerY, 300);
+    emitter.width = 1920;
+    emitter.height = 1920;
+    emitter.minRotation = 0;
+    emitter.maxRotation = 0;
+    emitter.minParticleSpeed.x = 0;
+    emitter.minParticleSpeed.y = 0;
+    emitter.maxParticleSpeed.x = 0;
+    emitter.maxParticleSpeed.y = 0;
+
+    emitter.minParticleScale = 0.2;
+    emitter.maxParticleScale = 0.5;
+    emitter.makeParticles('star');
+    emitter.gravity = 0;
+
+    emitter.start(true, 0, null, 300);
+
+
     this.player = game.add.sprite(10,10,'player');
     this.player.anchor.setTo(0.5,0.5);
     this.player.scale.setTo(0.6,0.6);
 
     this.player.shootEnabled = true;
 
+
+    game.camera.follow(this.player);
+
     //adding a healtbar for the player
     this.healthBar = game.add.sprite(-10 + this.player.x ,-20 + this.player.y,'health');
     //this.healthBar.anchor.setTo(0.5,0.5);
     this.healthBar.scale.x = 15;
-
 
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
@@ -151,7 +175,7 @@ var gameState = {
   {
 
     var bullet = game.add.sprite(this.player.x,this.player.y,'bullet');
-    bullet.scale.setTo(0.15,0.15);
+    bullet.scale.setTo(0.5,0.5);
     game.physics.enable(bullet, Phaser.Physics.ARCADE);
     game.physics.arcade.velocityFromAngle(angle, 500, bullet.body.velocity);
     bullet.angle = angle;
