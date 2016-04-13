@@ -231,7 +231,7 @@ socket.on('moved',function(data){
 //spawn bullets from other players
 socket.on('shoot',function(data){
   var bullet = game.add.sprite(data.x,data.y,'bullet');
-  bullet.scale.setTo(0.2,0.2);
+  bullet.scale.setTo(0.5,0.5);
   game.physics.enable(bullet, Phaser.Physics.ARCADE);
   game.physics.arcade.velocityFromAngle(data.angle, 500, bullet.body.velocity);
   bullet.angle = data.angle;

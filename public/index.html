@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      //socket for the game
       var socket = io('/game');
+      //socket for the chat
+      var socketChat = io('/chat');
     </script>
 
     <!-- jquery -->
@@ -26,9 +29,23 @@
     <script type="text/javascript"
     src="/assets/js/game/start.js"></script>
 
+    <!-- chat -->
+    <script src="assets/js/chat/chat.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
     <title>OnlineGame</title>
   </head>
   <body>
+    <div id="gameDiv">
 
+    </div>
+
+    <div id="chatDiv">
+      <form>
+        <input type="text"/>
+
+      </form>
+    </div>
   </body>
 </html>

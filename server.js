@@ -5,7 +5,6 @@ var io = require('socket.io')(http);
 
 var port = 9058;
 
-
 //application parameters to set the port
 process.argv.forEach(function (val,index) {
   if (index === 2) {
@@ -21,6 +20,7 @@ process.argv.forEach(function (val,index) {
 //networking code for the game using socket.io
 //using the namespace of /game
 require('./networking.js')(io.of('/game'));
+require('./networkingChat')(io.of('/chat'));
 
 app.use(express.static(__dirname + '/public'));
 

@@ -1,0 +1,13 @@
+#gameDiv {
+    float: left;
+    margin: 5px;
+}
+
+#chatDiv{
+    margin: 5px;
+}
+
+canvas {
+    display: block;
+    margin: auto;
+}
