@@ -1,13 +1,26 @@
-#gameDiv {
+#gameDiv{
     float: left;
     margin: 5px;
 }
 
 #chatDiv{
     margin: 5px;
+    border: solid 1px black;
+    padding: 5px;
+    padding-top: 1px;
+    float: left;
+    width: auto;
 }
 
 canvas {
     display: block;
-    margin: auto;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+li {
+    margin: 2px;
 }
