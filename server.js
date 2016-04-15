@@ -20,7 +20,10 @@ process.argv.forEach(function (val,index) {
 //networking code for the game using socket.io
 //using the namespace of /game
 require('./networking.js')(io.of('/game'));
-require('./networkingChat')(io.of('/chat'));
+require('./networkingChat.js')(io.of('/chat'));
+
+//api
+require('./api/rest.js')(app);
 
 app.use(express.static(__dirname + '/public'));
 
